@@ -58,14 +58,15 @@ public class ProductServiceTests {
 		page = new PageImpl<>(List.of(product));
 		category = Factory.createCategory();
 		dto = Factory.createProductDTO();
+		product = Factory.createProduct();
 		
 		Mockito.when(categoryRepository.getById(existingId)).thenReturn(category);
-		Mockito.doThrow(EntityNotFoundException.class).when(categoryRepository).getById(noExistingId);
+		Mockito.when(categoryRepository.getById(noExistingId)).thenThrow(EntityNotFoundException.class);
 		
 		Mockito.when(repository.findAll((PageRequest)ArgumentMatchers.any())).thenReturn(page);
 		
 		Mockito.when(repository.getById(existingId)).thenReturn(product);
-		Mockito.doThrow(EntityNotFoundException.class).when(repository).getById(noExistingId);
+		Mockito.when(repository.getById(noExistingId)).thenThrow(EntityNotFoundException.class);
 		
 		Mockito.when(repository.save(ArgumentMatchers.any())).thenReturn(product);
 		
@@ -81,21 +82,21 @@ public class ProductServiceTests {
 	@Test
 	public void findAllPagedShouldReturnPage() {
 		
-		PageRequest pagerequest = PageRequest.of(0, 10);
+		PageRequest pageRequest = PageRequest.of(0, 10);
 		
-		Page<ProductDTO> result = service.findAll(pagerequest);
+		Page<ProductDTO> result = service.findAll(pageRequest);
 		
 		Assertions.assertNotNull(result);
-		Mockito.verify(repository, Mockito.times(1)).findAll(pagerequest);
+		Mockito.verify(repository, Mockito.times(1)).findAll(pageRequest);
 		
 	}
 	
 	@Test
 	public void findByIdShouldReturnEntityWhenIdExists() {
 		
-		Assertions.assertDoesNotThrow(() -> {
-			service.findById(existingId);
-		});
+		 ProductDTO result = service.findById(existingId);
+		
+		Assertions.assertNotNull(result);
 		
 		Mockito.verify(repository, Mockito.times(1)).findById(existingId);
 	}
@@ -106,20 +107,30 @@ public class ProductServiceTests {
 		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
 			service.findById(noExistingId);
 		});
+		
+		Mockito.verify(repository, Mockito.times(1)).findById(noExistingId);
+	}
+	
+	
+	@Test
+	public void updateShouldReturnsProductDTOWhenIdExists() {
+		
+		ProductDTO result = service.update(existingId, dto);
+		
+		Assertions.assertNotNull(result);
+		
 	}
 	
 	@Test
-	public void updateShouldUpdateEntityWhenIdExists() {
+	public void updateShouldThrowResourceNotFoundExceptionWhenDoesNotExistId() {
 		
-		Assertions.assertDoesNotThrow(() -> {
-			service.update(existingId, dto);
+		Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+			service.update(noExistingId, dto);
 		});
 		
-		Mockito.verify(repository, Mockito.times(1)).getById(existingId);
-		Mockito.verify(categoryRepository).getById(existingId);
+		
 		
 	}
-	
 	@Test
 	public void deleteShouldDoNothingWhenIdExists() {
 		
