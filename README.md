@@ -4,7 +4,7 @@
 # Sobre o projeto
 O DS-CATALOG é uma aplicação full stack web responsiva que está sendo construída durante o Bootcamp da [DevSuperior](https://devsuperior.com "Site da DevSuperior") usando Spring Boot e React-Js.
 
-A aplicação consiste em um website simulando um website de compras. As rotas e funcionalidades são protegidas com autorização e autenticação usando JWt e Oauth2. 
+A aplicação consiste em uma API Rest de um sistema de catálogo de produtos.  As rotas e funcionalidades são protegidas com autorização e autenticação usando JWt e Oauth2.
 
 ## Layout web
 ![Web 1](https://github.com/miguelmoraisdev/dscatalog-bootcamp-miguelm/blob/master/_assets/home.png)
